@@ -92,7 +92,7 @@ class Session {
      *  @uses Trax::$session_lifetime
 	 *  @uses Trax::$session_maxlifetime_minutes
      */
-	function init() {
+	private static function init() {
         Trax::$session_name = Trax::$session_name ? Trax::$session_name : self::TRAX_SESSION_NAME;
         Trax::$session_lifetime = Trax::$session_lifetime ? Trax::$session_lifetime : self::TRAX_SESSION_LIFETIME;
         Trax::$session_maxlifetime_minutes = Trax::$session_maxlifetime_minutes ? Trax::$session_maxlifetime_minutes : self::TRAX_SESSION_MAXLIFETIME_MINUTES;
@@ -233,7 +233,7 @@ class Session {
 	 *
 	 *  @uses start()
 	 */
-    function start() {
+    public static function start() {
 		self::start_session();
     }
 
@@ -247,7 +247,7 @@ class Session {
      *  @uses session_start()
      *  @uses $user_agent
      */
-	function start_session() {
+	private static function start_session() {
 
         if(!self::$started) {
 

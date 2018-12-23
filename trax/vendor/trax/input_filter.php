@@ -171,7 +171,7 @@ class InputFilter {
      *  @uses $tagsArray
      *  @uses $tagsMethod
      */
-	public function init($tagsArray = array(), $attrArray = array(),
+	private static function init($tagsArray = array(), $attrArray = array(),
                                 $tagsMethod = true, $attrMethod = true,
                                 $xssAuto = true) { 
                                     
@@ -190,7 +190,7 @@ class InputFilter {
      *  Adds a field to exclude from filtering
      *
      */	
-	public function add_field_exception($field) {
+	public static function add_field_exception($field) {
 	    if($field) {
 	        self::$exception_fields[] = $field;   
 	    }
@@ -250,7 +250,7 @@ class InputFilter {
      *  @uses process()
      *  @todo Check out FIXMEs
      */
-    public function process_all($tagsArray = array(), $attrArray = array(),
+    public static function process_all($tagsArray = array(), $attrArray = array(),
                                 $tagsMethod = true, $attrMethod = true,
                                 $xssAuto = true) {
         self::init($tagsArray, $attrArray, $tagsMethod,
@@ -276,7 +276,7 @@ class InputFilter {
      *  @uses decode()
      *  @uses remove()
      */
-	public function process($source, $extra_key = null) {
+	private static function process($source, $extra_key = null) {
 		// clean all elements in this array
 		if(is_array($source)) {
 			foreach($source as $key => $value) {
@@ -307,7 +307,7 @@ class InputFilter {
      *  @return string 'cleaned' version of $source
      *  @uses filterTags()
      */
-	protected function remove($source) {
+	protected static function remove($source) {
 		// provides nested-tag protection
 		while($source != self::filterTags($source)) {
 			$source = self::filterTags($source);
@@ -335,7 +335,7 @@ class InputFilter {
      *  @uses $tagsMethod
      *  @uses $xssAuto
      */
-	protected function filterTags($source) {
+	protected static function filterTags($source) {
 		// filter pass setup
 		$preTag = null;
 		$postTag = $source;
@@ -532,13 +532,19 @@ class InputFilter {
      *  @uses html_entity_decode()
      *  @uses preg_replace()
      */
-	protected function decode($source) {
+	protected static function decode($source) {
 		// url decode
 		$source = html_entity_decode($source, ENT_QUOTES, "ISO-8859-1");
 		// convert decimal &#DDD; to character DDD
-		$source = preg_replace('/&#(\d+);/me',"chr(\\1)", $source);
+		// --DEPRECATED:-- $source = preg_replace('/&#(\d+);/me',"chr(\\1)", $source);
+		$source = preg_replace_callback('/&#(\d+);/m', function ($matches) {
+			return chr($matches[1]);
+		}, $source);
 		// convert hex &#xXXX; to character XXX
-		$source = preg_replace('/&#x([a-f0-9]+);/mei',"chr(0x\\1)", $source);
+		// --DEPRECATED:-- $source = preg_replace('/&#x([a-f0-9]+);/mei',"chr(0x\\1)", $source);
+		$source = preg_replace_callback('/&#x([a-f0-9]+);/mi', function ($matches) {
+			return chr(hexdec($matches[1]));
+		}, $source);
 		return $source;
 	}
 }

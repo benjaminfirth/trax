@@ -143,7 +143,7 @@ class Trax {
         ViewHandlers::register_extension('phtml');
     }
 
-    function add_include_path($path, $prepend = false, $use_trax_root = false) {
+    public static function add_include_path($path, $prepend = false, $use_trax_root = false) {
         if(is_array($path)) {
             foreach($path as $new_path) {
                 if(!in_array($new_path, self::$include_paths)) {
@@ -165,7 +165,7 @@ class Trax {
         }
     }
 
-    function set_default_include_paths() {
+    private static function set_default_include_paths() {
         # first clear out all the current paths
         self::$include_paths = array();
         # now add the default paths
@@ -180,7 +180,7 @@ class Trax {
         ));
     }
 
-    function load_active_record_connections_config() {
+    private static function load_active_record_connections_config() {
         # Make sure database settings are cleared out
         ActiveRecord::$database_settings = array();
         ActiveRecord::clear_all_connections();
@@ -193,7 +193,7 @@ class Trax {
         ActiveRecord::$logger = new Trax;
     }
 
-    function include_env_config() {
+    public static function include_env_config() {
         # Include the application environment specific config file
         if(file_exists(self::$environments_path."/".TRAX_ENV.".php")) {
             include_once(self::$environments_path."/".TRAX_ENV.".php");

@@ -723,7 +723,7 @@ class ActiveRecord {
                 $this->save_associations[$association_type][] = $value;
                 if($association_type == "belongs_to") {
                     $primary_key = $value->primary_keys[0];
-                    if(is_array($this->belongs_to[$key]) && array_key_exists('foreign_key', $this->belongs_to[$key])) {
+                    if(array_key_exists($key, $this->belongs_to) && is_array($this->belongs_to[$key]) && array_key_exists('foreign_key', $this->belongs_to[$key])) {
                         $foreign_key = $this->belongs_to[$key]['foreign_key'];
                     } else {
                         $foreign_key = Inflector::singularize($value->table_name)."_".$primary_key;
@@ -1467,11 +1467,11 @@ class ActiveRecord {
      */
     function query($sql, $read_only = false) {
         # Run the query
-        $db =& $this->get_connection($read_only);
+        $db = $this->get_connection($read_only);
         if(self::$environment != 'production') {
             $start = microtime(true);
         }
-        $rs =& $db->query($sql);
+        $rs = $db->query($sql);
         $duration = null;
         if(self::$environment != 'production') {
             $duration = (microtime(true) - $start)*1000;
@@ -3132,7 +3132,7 @@ class ActiveRecord {
     /**
      *  Clears all database connections
      */
-    function clear_all_connections() {
+    public static function clear_all_connections() {
         foreach((array)self::$connection_pool as $connection) {
             if(is_object($connection)) {
                 $connection->disconnect();

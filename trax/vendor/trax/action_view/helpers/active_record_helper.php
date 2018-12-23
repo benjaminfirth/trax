@@ -365,11 +365,11 @@ class ActiveRecordHelper extends Helpers {
      *  @uses object()
      *  @uses tag_without_error_wrapping()
      */
-    function tag($name, $options = array()) {
+    function tag($name, $options = array(), $open = false) {
         if(count($this->object()->errors)) {
-            return $this->error_wrapping($this->tag_without_error_wrapping($name, $options), $this->object()->errors[$this->attribute_name]);
+            return $this->error_wrapping($this->tag_without_error_wrapping($name, $options, $open), $this->object()->errors[$this->attribute_name]);
         } else {
-            return $this->tag_without_error_wrapping($name, $options);
+            return $this->tag_without_error_wrapping($name, $options, $open);
         }
     }
 
